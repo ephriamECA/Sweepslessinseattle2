@@ -32,7 +32,7 @@ export function HeroSection() {
           <div className="mx-auto w-full max-w-6xl">
             <div className="max-w-3xl">
               <p
-                className="hero-fade-in font-[family-name:var(--font-script)] text-xl text-[var(--sl-red)] sm:text-2xl"
+                className="hero-fade-in text-lg italic text-[var(--sl-red)] sm:text-xl"
               >
                 {hero.titleLine1}
               </p>
@@ -106,20 +106,20 @@ export function HeroSection() {
 
       {/* Trust strip */}
       <div className="border-t border-[var(--sl-border)] bg-[var(--background)]">
-        <div className="scroll-snap-x mx-auto flex max-w-6xl gap-8 overflow-x-auto px-4 py-8 sm:flex-wrap sm:justify-center sm:gap-10 sm:overflow-visible lg:justify-between">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-8 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
           {trustBullets.map((b) => (
             <div
               key={b.id}
-              className="flex shrink-0 items-center gap-3"
+              className="flex items-start gap-3"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sl-red)]/10 text-xs text-[var(--sl-red)]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--sl-red)]/10 text-xs text-[var(--sl-red)]">
                 &#10003;
               </span>
-              <div>
-                <span className="block text-sm font-bold text-[var(--sl-ink)]">
+              <div className="min-w-0">
+                <span className="block text-sm font-bold leading-snug text-[var(--sl-ink)]">
                   {b.label}
                 </span>
-                <span className="text-xs text-[var(--sl-muted)]">
+                <span className="block text-xs leading-snug text-[var(--sl-muted)]">
                   {b.short}
                 </span>
               </div>

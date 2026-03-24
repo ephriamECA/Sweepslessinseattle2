@@ -46,7 +46,7 @@ export default async function ServicePage({ params }: Props) {
           <div className="mx-auto grid max-w-5xl gap-12 px-4 lg:grid-cols-2 lg:items-start">
             <div data-aos="fade-right">
               <blockquote className="border-l-2 border-[var(--sl-red)] pl-5">
-                <p className="font-[family-name:var(--font-script)] text-xl leading-relaxed text-[var(--foreground)]">
+                <p className="text-lg italic leading-relaxed text-[var(--foreground)]">
                   &ldquo;{svc.quote}&rdquo;
                 </p>
                 <cite className="mt-3 block text-sm not-italic text-[var(--sl-muted)]">

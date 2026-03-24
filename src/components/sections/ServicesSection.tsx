@@ -53,7 +53,7 @@ export function ServicesSection() {
                     {s.name}
                   </h3>
                   <blockquote className="mt-5 border-l-2 border-[var(--sl-red)]/30 pl-4">
-                    <p className="font-[family-name:var(--font-script)] text-lg text-[var(--background)]/40">
+                    <p className="text-sm italic leading-relaxed text-[var(--background)]/40">
                       &ldquo;{s.quote}&rdquo;
                     </p>
                   </blockquote>
