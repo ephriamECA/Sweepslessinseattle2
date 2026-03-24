@@ -9,14 +9,11 @@ import "swiper/css/pagination";
 import { hero, trustBullets } from "@/content/site";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 
-const subtitleWords = hero.subtitle.split(" ");
-
 export function HeroSection() {
   const reducedMotion = useReducedMotion();
 
   return (
     <section id="hero" className="relative">
-      {/* Full-bleed cinematic hero */}
       <div className="grain relative min-h-[100svh] overflow-hidden bg-[var(--sl-ink)]">
         <Image
           src={hero.videoPoster}
@@ -31,28 +28,26 @@ export function HeroSection() {
         <div className="relative flex min-h-[100svh] flex-col justify-center px-4">
           <div className="mx-auto w-full max-w-6xl">
             <div className="max-w-3xl">
-              <p
-                className="hero-fade-in text-lg italic text-[var(--sl-red)] sm:text-xl"
-              >
-                {hero.titleLine1}
-              </p>
-              <h1
-                className="hero-fade-in-delay mt-2 font-[family-name:var(--font-display)] text-[clamp(3.5rem,10vw,9rem)] leading-[0.9] tracking-wide text-[var(--background)] uppercase"
-              >
-                {hero.titleAccent}
-              </h1>
+              {/* "Cleaning Made Charming" with sparkle stars */}
+              <div className="sparkle-container hero-fade-in">
+                <span aria-hidden className="sparkle-star" />
+                <span aria-hidden className="sparkle-star" />
+                <span aria-hidden className="sparkle-star" />
+                <span aria-hidden className="sparkle-star" />
+                <span aria-hidden className="sparkle-star" />
+                <p className="text-lg italic text-[var(--sl-red)] sm:text-xl">
+                  {hero.titleLine1}
+                </p>
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-[clamp(3.5rem,10vw,9rem)] leading-[0.9] tracking-wide text-[var(--background)] uppercase">
+                  {hero.titleAccent}
+                </h1>
+              </div>
 
               <div className="mt-8 h-px w-20 bg-[var(--sl-red)]" />
 
-              <p className="word-reveal mt-8 max-w-xl text-lg leading-relaxed text-[var(--background)]/70 sm:text-xl">
-                {subtitleWords.map((word, i) => (
-                  <span
-                    key={i}
-                    style={reducedMotion ? undefined : { animationDelay: `${1.0 + i * 0.1}s` }}
-                  >
-                    {word}{" "}
-                  </span>
-                ))}
+              {/* Spaced-out subtitle with roll-in animation */}
+              <p className="hero-subtitle-roll mt-8 max-w-2xl font-[family-name:var(--font-display)] text-lg uppercase text-[var(--background)]/70 sm:text-xl md:text-2xl">
+                {hero.subtitle}
               </p>
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -108,10 +103,7 @@ export function HeroSection() {
       <div className="border-t border-[var(--sl-border)] bg-[var(--background)]">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-8 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
           {trustBullets.map((b) => (
-            <div
-              key={b.id}
-              className="flex items-start gap-3"
-            >
+            <div key={b.id} className="flex items-start gap-3">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--sl-red)]/10 text-xs text-[var(--sl-red)]">
                 &#10003;
               </span>

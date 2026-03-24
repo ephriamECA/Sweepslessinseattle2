@@ -103,7 +103,9 @@ export const services = [
   {
     id: "destiny",
     slug: "/services/destiny",
-    name: "The \u201cDestiny\u201d Routine",
+    name: "Restorative Clean",
+    navLabel: "Restorative Clean",
+    detailName: "The \u201cDestiny\u201d Routine",
     subtitle: "Restorative Clean",
     image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80",
     quote: "Destiny is something that we\u2019ve invented because we can\u2019t stand the fact that everything that happens is accidental.",
@@ -123,7 +125,9 @@ export const services = [
   {
     id: "million-things",
     slug: "/services/million-things",
-    name: "The Million Tiny Little Things",
+    name: "Deep Clean",
+    navLabel: "Deep Clean",
+    detailName: "The Million Tiny Little Things",
     subtitle: "Deep Clean",
     image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1200&q=80",
     quote: "It was a million tiny things that, when you added them all up, they just meant we were supposed to be together.",
@@ -144,8 +148,11 @@ export const services = [
   {
     id: "observation-deck",
     slug: "/services/observation-deck",
-    name: "The \u201cObservation Deck\u201d",
-    subtitle: "Candlelight & Cabernet \u2014 Date Night In",
+    name: "Date Night In",
+    navLabel: "Date Night In",
+    detailName: "The \u201cObservation Deck\u201d Candlelight & Cabernet",
+    subtitle: "Candlelight & Cabernet",
+    baseNote: "Includes a full Restorative Clean as the base",
     image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&q=80",
     quote: "You don\u2019t want to be in love. You want to be in love in a movie.",
     quoteAttr: "Becky, Sleepless in Seattle",
@@ -174,6 +181,53 @@ export const services = [
       {
         name: "The \u201cSubconscious Attraction\u201d Pairing",
         description: "We position the bottle right next to your Sweepsless & Smitten Stems, creating a visual centerpiece that says, \u201cI\u2019ve been expecting you, and I\u2019ve thought of everything.\u201d",
+      },
+    ],
+  },
+  {
+    id: "midnight-radio",
+    slug: "/services/midnight-radio",
+    name: "Puppy Package",
+    navLabel: "Puppy Package",
+    detailName: "The \u201cMidnight Radio\u201d Mid-Day Break",
+    subtitle: "For the pup who needs a heart-to-heart",
+    baseNote: "Includes a full Restorative Clean as the base",
+    image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1200&q=80",
+    quote: "You don\u2019t want to be in love. You want to be in love in a movie.",
+    quoteAttr: "Becky, Sleepless in Seattle",
+    blurb: "For the pup who needs a \u201cheart-to-heart\u201d session while you\u2019re holding down the fort on the rainy side of town.",
+    longDescription:
+      "We get it\u2014being a business professional means your schedule is often as packed as the observation deck at sunset. We know that heavy feeling when meetings run long and you\u2019re stuck in the office while your best friend is waiting by the door for a sign. You\u2019re working hard to provide the \u201cmagic,\u201d but that doesn\u2019t mean you don\u2019t feel the tug on your heartstrings when you can\u2019t be there.",
+    includes: [
+      "Full restorative clean of your main living spaces",
+      "Kitchen and bathroom deep pass",
+      "Floor care throughout",
+      "All surfaces dusted and polished",
+    ],
+    addOns: [
+      {
+        name: "The \u201cSeattle Drizzle\u201d (20 min Walk)",
+        description: "A walk through the neighborhood, rain or shine (mostly rain).",
+      },
+      {
+        name: "The \u201cEmpire State\u201d Playtime (10 min Play)",
+        description: "\u201cTop of the World\u201d belly rubs: premium scratches that feel like a meeting at sunset.",
+      },
+      {
+        name: "The \u201cAffair to Remem-Bark\u201d Tug (10 min Play)",
+        description: "A high-energy tug-of-war session with a rope toy.",
+      },
+      {
+        name: "The \u201cVictoria\u201d Yard Cleanup",
+        description: "We\u2019ll clear the front and back yard of any \u201cunsolicited\u201d packages left behind.",
+      },
+      {
+        name: "The \u201cScent-less in Seattle\u201d Spa",
+        description: "A full bath and brush-out for your four-legged friend.",
+      },
+      {
+        name: "The \u201cPup Box\u201d Sampler",
+        description: "A small toy, pup bandana, and assorted premium treats.",
       },
     ],
   },
@@ -309,8 +363,12 @@ export const faqItems = [
     answer: "We serve Kirkland, Mill Creek, Redmond, Bellevue, Sammamish, Edmonds, Lynnwood, Kenmore, Bothell, Woodinville, Medina, and Mercer Island.",
   },
   {
-    question: "What\u2019s the Observation Deck package?",
-    answer: "It\u2019s our signature date-night-in service. Beyond a full clean, we set the atmosphere with a premium scented candle, artisanal snack spread, fresh bouquet, and a bottle of wine\u2014so you can be fully present for the evening.",
+    question: "What\u2019s the Date Night In package?",
+    answer: "It\u2019s our signature date-night-in service. Beyond a full restorative clean, we set the atmosphere with a premium scented candle, artisanal snack spread, fresh bouquet, and a bottle of wine\u2014so you can be fully present for the evening.",
+  },
+  {
+    question: "What\u2019s the Puppy Package?",
+    answer: "Our mid-day break for busy pet parents. It includes a full restorative clean plus add-ons like walks, playtime, yard cleanup, a spa bath, and treat samplers\u2014so your best friend is cared for while you\u2019re at work.",
   },
   {
     question: "Can I reschedule or skip a cleaning?",
@@ -323,7 +381,7 @@ export const nav = {
     {
       label: "Services",
       href: "/services/destiny",
-      children: services.map((s) => ({ label: s.name, href: s.slug })),
+      children: services.map((s) => ({ label: s.navLabel, href: s.slug })),
     },
     { label: "About", href: "/about" },
     { label: "Reviews", href: "/reviews" },

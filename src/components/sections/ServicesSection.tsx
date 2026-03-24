@@ -50,7 +50,7 @@ export function ServicesSection() {
                     {s.subtitle}
                   </p>
                   <h3 className="mt-3 font-[family-name:var(--font-display)] text-2xl tracking-wide text-[var(--background)] uppercase md:text-3xl">
-                    {s.name}
+                    {s.navLabel}
                   </h3>
                   <blockquote className="mt-5 border-l-2 border-[var(--sl-red)]/30 pl-4">
                     <p className="text-sm italic leading-relaxed text-[var(--background)]/40">

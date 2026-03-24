@@ -17,7 +17,7 @@ export function SiteFooter() {
             {site.tagline}
           </p>
           <div className="mt-5 flex flex-wrap gap-1.5">
-            {serviceAreas.slice(0, 6).map((a) => (
+            {serviceAreas.map((a) => (
               <span key={a} className="rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] text-[var(--background)]/40">
                 {a}
               </span>

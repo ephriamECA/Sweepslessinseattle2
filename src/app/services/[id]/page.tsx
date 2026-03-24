@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const svc = services.find((s) => s.id === id);
   if (!svc) return {};
   return {
-    title: svc.name,
+    title: svc.detailName,
     description: svc.blurb,
     alternates: { canonical: svc.slug },
   };
@@ -34,17 +34,24 @@ export default async function ServicePage({ params }: Props) {
 
   const otherServices = services.filter((s) => s.id !== id);
   const hasAddOns = "addOns" in svc && svc.addOns;
+  const hasBaseNote = "baseNote" in svc && svc.baseNote;
 
   return (
     <>
       <JsonLd data={serviceJsonLd(svc)} />
       <SiteHeader />
       <main id="main" className="flex-1">
-        <PageHero title={svc.name} subtitle={svc.subtitle} />
+        <PageHero title={svc.detailName} subtitle={svc.subtitle} />
 
         <section className="bg-[var(--background)] py-24 md:py-36">
           <div className="mx-auto grid max-w-5xl gap-12 px-4 lg:grid-cols-2 lg:items-start">
             <div data-aos="fade-right">
+              {hasBaseNote && (
+                <div className="mb-8 inline-flex items-center gap-2 rounded-lg border border-[var(--sl-red)]/20 bg-[var(--sl-red)]/5 px-4 py-2.5">
+                  <span className="text-xs text-[var(--sl-red)]">&#10003;</span>
+                  <span className="text-sm font-medium text-[var(--sl-red)]">{svc.baseNote}</span>
+                </div>
+              )}
               <blockquote className="border-l-2 border-[var(--sl-red)] pl-5">
                 <p className="text-lg italic leading-relaxed text-[var(--foreground)]">
                   &ldquo;{svc.quote}&rdquo;
@@ -66,7 +73,7 @@ export default async function ServicePage({ params }: Props) {
             >
               <Image
                 src={svc.image}
-                alt={`${svc.name} cleaning service by Sweepsless in Seattle`}
+                alt={`${svc.detailName} cleaning service by Sweepsless in Seattle`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -112,7 +119,7 @@ export default async function ServicePage({ params }: Props) {
                 The &ldquo;Magic&rdquo; Add-Ons
               </h2>
               <p className="mt-3 text-sm text-[var(--background)]/40" data-aos="fade-up" data-aos-delay="50">
-                Included with every Observation Deck booking
+                Included with every {svc.detailName} booking
               </p>
               <div className="mt-12 grid gap-6 sm:grid-cols-2">
                 {svc.addOns.map((addon, i) => (
@@ -143,7 +150,7 @@ export default async function ServicePage({ params }: Props) {
             >
               Other services
             </h2>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {otherServices.map((s, i) => (
                 <Link
                   key={s.id}
@@ -155,10 +162,10 @@ export default async function ServicePage({ params }: Props) {
                   <div className="relative aspect-[3/2]">
                     <Image
                       src={s.image}
-                      alt={`${s.name} \u2014 Sweepsless in Seattle`}
+                      alt={`${s.navLabel} \u2014 Sweepsless in Seattle`}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                      sizes="(max-width: 640px) 100vw, 50vw"
+                      sizes="(max-width: 640px) 100vw, 33vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--sl-ink)]/80 to-transparent" />
                     <div className="absolute right-0 bottom-0 left-0 p-6">
@@ -166,7 +173,7 @@ export default async function ServicePage({ params }: Props) {
                         {s.subtitle}
                       </p>
                       <h3 className="mt-1 font-[family-name:var(--font-display)] text-xl tracking-wide text-[var(--background)] uppercase">
-                        {s.name}
+                        {s.navLabel}
                       </h3>
                     </div>
                   </div>

@@ -1,30 +1,100 @@
 "use client";
 
-import { useActionState } from "react";
-import { useRef } from "react";
-import { sendQuoteRequest, type QuoteFormState } from "@/app/actions/send-quote";
-import { services } from "@/content/site";
+import { useState, useRef, useCallback } from "react";
+import { services, site } from "@/content/site";
 
 const inputClass =
   "w-full rounded-lg border border-[var(--sl-border)] bg-[var(--sl-surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--sl-muted)] outline-none transition focus:border-[var(--sl-red)] focus:ring-1 focus:ring-[var(--sl-red)]/30";
 
+type FormStatus = { success: boolean; message: string } | null;
+
 export function QuoteForm({ onSuccess }: { onSuccess?: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<FormStatus>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const [state, action, isPending] = useActionState<QuoteFormState, FormData>(
-    async (prev, formData) => {
-      const result = await sendQuoteRequest(prev, formData);
-      if (result?.success) {
+  const reset = useCallback(() => {
+    setSubmitted(false);
+    setStatus(null);
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsPending(true);
+    setStatus(null);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const name = formData.get("name")?.toString().trim();
+    const email = formData.get("email")?.toString().trim();
+    const phone = formData.get("phone")?.toString().trim();
+    const message = formData.get("message")?.toString().trim();
+    const consent = formData.get("consent");
+
+    if (!name || !email || !phone || !message) {
+      setStatus({ success: false, message: "Please fill in all required fields." });
+      setIsPending(false);
+      return;
+    }
+    if (!consent) {
+      setStatus({ success: false, message: "Please agree to the communication consent before submitting." });
+      setIsPending(false);
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus({ success: false, message: "Please enter a valid email address." });
+      setIsPending(false);
+      return;
+    }
+
+    const key = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
+    if (!key) {
+      setStatus({ success: false, message: "Form is not configured. Please email us directly at Sweepslessinseattle@gmail.com." });
+      setIsPending(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: key,
+          subject: `Pricing request from ${name}`,
+          from_name: "Sweepsless in Seattle Website",
+          name,
+          email,
+          phone,
+          service: formData.get("service")?.toString().trim() || "Not specified",
+          message,
+          consent: "Yes \u2014 agreed to receive emails, texts, or phone calls",
+        }),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
         formRef.current?.reset();
+        setSubmitted(true);
         onSuccess?.();
+      } else {
+        setStatus({ success: false, message: result.message || "Something went wrong. Please try emailing us directly." });
       }
-      return result;
-    },
-    null,
-  );
+    } catch {
+      setStatus({ success: false, message: "Network error. Please try calling or emailing us directly." });
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  if (submitted) {
+    return <SuccessView onReset={reset} />;
+  }
 
   return (
-    <form ref={formRef} action={action} className="space-y-4">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="quote-name" className="mb-1.5 block text-sm font-medium text-[var(--sl-ink)]">
           Name <span className="text-[var(--sl-red)]">*</span>
@@ -86,7 +156,7 @@ export function QuoteForm({ onSuccess }: { onSuccess?: () => void }) {
           </option>
           {services.map((s) => (
             <option key={s.id} value={s.name}>
-              {s.name}
+              {s.detailName} ({s.subtitle})
             </option>
           ))}
           <option value="Not sure yet">Not sure yet</option>
@@ -120,16 +190,12 @@ export function QuoteForm({ onSuccess }: { onSuccess?: () => void }) {
         </label>
       </div>
 
-      {state && (
+      {status && !status.success && (
         <div
           role="alert"
-          className={`rounded-lg border px-4 py-3 text-sm ${
-            state.success
-              ? "border-[var(--sl-border)] bg-[var(--sl-wash)] text-[var(--sl-ink)]"
-              : "border-[var(--sl-red)]/20 bg-[var(--sl-red)]/5 text-[var(--sl-red)]"
-          }`}
+          className="rounded-lg border border-[var(--sl-red)]/20 bg-[var(--sl-red)]/5 px-4 py-3 text-sm text-[var(--sl-red)]"
         >
-          {state.message}
+          {status.message}
         </div>
       )}
 
@@ -141,5 +207,61 @@ export function QuoteForm({ onSuccess }: { onSuccess?: () => void }) {
         {isPending ? "Sending\u2026" : "Submit"}
       </button>
     </form>
+  );
+}
+
+function SuccessView({ onReset }: { onReset: () => void }) {
+  return (
+    <div className="success-view flex flex-col items-center py-12 text-center">
+      {/* Animated checkmark circle */}
+      <div className="success-ring relative flex h-24 w-24 items-center justify-center">
+        <svg className="success-check" viewBox="0 0 52 52" width="96" height="96">
+          <circle
+            className="success-circle"
+            cx="26" cy="26" r="24"
+            fill="none"
+            stroke="var(--sl-red)"
+            strokeWidth="2"
+          />
+          <path
+            className="success-tick"
+            fill="none"
+            stroke="var(--sl-red)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M14 27l7 7 16-16"
+          />
+        </svg>
+        {/* Sparkle bursts */}
+        <span className="success-sparkle success-sparkle-1" />
+        <span className="success-sparkle success-sparkle-2" />
+        <span className="success-sparkle success-sparkle-3" />
+        <span className="success-sparkle success-sparkle-4" />
+        <span className="success-sparkle success-sparkle-5" />
+        <span className="success-sparkle success-sparkle-6" />
+      </div>
+
+      <h3 className="success-text mt-8 font-[family-name:var(--font-display)] text-3xl tracking-wider text-[var(--sl-ink)] uppercase md:text-4xl">
+        Request sent
+      </h3>
+      <p className="success-text-delay mt-4 max-w-sm text-base leading-relaxed text-[var(--sl-muted)]">
+        Thank you! We&apos;ll review your details and be in touch within a few hours.
+      </p>
+      <p className="success-text-delay mt-2 text-sm text-[var(--sl-muted)]">
+        Questions in the meantime? Call us at{" "}
+        <a href={`tel:${site.phoneTel}`} className="font-medium text-[var(--sl-red)] hover:underline">
+          {site.phoneDisplay}
+        </a>
+      </p>
+
+      <button
+        type="button"
+        onClick={onReset}
+        className="success-text-delay mt-8 text-sm font-bold tracking-[0.1em] text-[var(--sl-red)] uppercase transition hover:text-[var(--sl-accent)]"
+      >
+        Submit another request
+      </button>
+    </div>
   );
 }

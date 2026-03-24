@@ -1,11 +1,11 @@
 "use server";
 
-import { resend, CONTACT_EMAIL, EMAIL_FROM } from "@/lib/email";
-
 export type QuoteFormState = {
   success: boolean;
   message: string;
 } | null;
+
+const WEB3FORMS_KEY = process.env.WEB3FORMS_KEY;
 
 export async function sendQuoteRequest(
   _prev: QuoteFormState,
@@ -31,57 +31,57 @@ export async function sendQuoteRequest(
     return { success: false, message: "Please enter a valid email address." };
   }
 
-  const htmlBody = `
-    <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; color: #1A1A1A;">
-      <h2 style="color: #C41E3A; margin-bottom: 16px;">New Pricing Request</h2>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr>
-          <td style="padding: 8px 12px; font-weight: bold; vertical-align: top; width: 100px;">Name</td>
-          <td style="padding: 8px 12px;">${escapeHtml(name)}</td>
-        </tr>
-        <tr style="background: #F5ECD7;">
-          <td style="padding: 8px 12px; font-weight: bold; vertical-align: top;">Email</td>
-          <td style="padding: 8px 12px;"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td>
-        </tr>
-        <tr>
-          <td style="padding: 8px 12px; font-weight: bold; vertical-align: top;">Phone</td>
-          <td style="padding: 8px 12px;"><a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a></td>
-        </tr>
-        ${service ? `<tr style="background: #F5ECD7;"><td style="padding: 8px 12px; font-weight: bold; vertical-align: top;">Service</td><td style="padding: 8px 12px;">${escapeHtml(service)}</td></tr>` : ""}
-      </table>
-      <div style="margin-top: 20px; padding: 16px; background: #F5ECD7; border-radius: 8px;">
-        <p style="margin: 0 0 4px; font-weight: bold;">Message</p>
-        <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(message)}</p>
-      </div>
-      <p style="margin-top: 16px; font-size: 12px; color: #5C5C5C;">
-        &#10003; Customer consented to receive emails, texts, or phone calls.
-      </p>
-      <p style="margin-top: 8px; font-size: 13px; color: #5C5C5C;">
-        Sent from the Sweepsless in Seattle website.
-      </p>
-    </div>
-  `;
+  if (!WEB3FORMS_KEY) {
+    console.error("WEB3FORMS_KEY is not set in environment variables");
+    return {
+      success: false,
+      message: "Form is not configured yet. Please call or email us directly at Sweepslessinseattle@gmail.com.",
+    };
+  }
 
   try {
-    const { error } = await resend.emails.send({
-      from: `Sweepsless in Seattle <${EMAIL_FROM}>`,
-      to: CONTACT_EMAIL,
-      replyTo: email,
-      subject: `Pricing request from ${name}${service ? ` \u2014 ${service}` : ""}`,
-      html: htmlBody,
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: `Pricing request from ${name}${service ? ` \u2014 ${service}` : ""}`,
+        from_name: "Sweepsless in Seattle Website",
+        name,
+        email,
+        phone,
+        service: service || "Not specified",
+        message,
+        consent: "Yes \u2014 agreed to receive emails, texts, or phone calls",
+      }),
     });
 
-    if (error) {
-      console.error("Resend error:", error);
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error("Web3Forms returned non-JSON (status %d):", response.status, text.slice(0, 300));
       return {
         success: false,
-        message: "Something went wrong sending your message. Please try calling or emailing us directly.",
+        message: "Form service error. Please try calling or emailing us directly at Sweepslessinseattle@gmail.com.",
       };
     }
 
+    const result = await response.json();
+
+    if (result.success) {
+      return {
+        success: true,
+        message: "Thank you! We\u2019ll be in touch within a few hours.",
+      };
+    }
+
+    console.error("Web3Forms error:", result);
     return {
-      success: true,
-      message: "Thank you! We\u2019ll be in touch within a few hours.",
+      success: false,
+      message: result.message || "Something went wrong sending your message. Please try calling or emailing us directly.",
     };
   } catch (err) {
     console.error("Email send failed:", err);
@@ -90,12 +90,4 @@ export async function sendQuoteRequest(
       message: "Something went wrong. Please try calling or emailing us directly.",
     };
   }
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

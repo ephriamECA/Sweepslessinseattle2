@@ -40,7 +40,7 @@ export default function OgImage() {
               fontSize: "42px",
               fontWeight: "bold",
               fontStyle: "italic",
-              color: "#ECDCC2",
+              color: "#F5EDE0",
             }}
           >
             S
@@ -49,7 +49,7 @@ export default function OgImage() {
             style={{
               fontSize: "56px",
               fontWeight: "bold",
-              color: "#ECDCC2",
+              color: "#F5EDE0",
               margin: "0",
               lineHeight: "1.2",
               letterSpacing: "0.05em",
@@ -80,7 +80,7 @@ export default function OgImage() {
           <p
             style={{
               fontSize: "18px",
-              color: "rgba(236, 220, 194, 0.6)",
+              color: "rgba(245, 237, 224, 0.6)",
               margin: "0",
               marginTop: "4px",
             }}
